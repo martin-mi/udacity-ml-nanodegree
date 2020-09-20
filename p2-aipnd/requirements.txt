@@ -1,0 +1,8 @@
+jupyterlab=2.2.7=py_0
+matplotlib=3.3.1=0
+numpy=1.19.1=py38h3b9f5b6_0
+pandas=1.1.1=py38hb1e8313_0
+python=3.8.5=h26836e1_1
+pytorch=1.6.0=py3.8_0
+seaborn=0.10.1=py_0
+torchvision=0.7.0=py38_cpu
