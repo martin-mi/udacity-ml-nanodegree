@@ -1,3 +1,4 @@
+import sys
 import torch
 from torch import nn, optim
 import torch.nn.functional as F
@@ -18,15 +19,19 @@ class ImageModelWrapper:
         loss calculation and backpropagation.
 
         Args:
-            arch: string, specifies which pre-trained model to use. Valid parameters are 'vgg13' and 'vgg16'
+            arch: string, specifies which pre-trained model to use.
             hidden_units: integer, size of the hidden layer of the custom classifier
             learning_rate: float, learning rate that gets passed to the optimizer
         """
 
-        if arch == "vgg13":
-            self.model = models.vgg13(pretrained=True)
+        if hasattr(models, arch):
+            self.model = getattr(models, arch)(pretrained=True)
         else:
-            self.model = models.vgg16(pretrained=True)
+            sys.exit(
+                "Architecture '{}' not found. Please refer to the documentation for possible architectures at https://pytorch.org/docs/stable/torchvision/models.html".format(
+                    arch
+                )
+            )
 
         self.model_type = arch
 
@@ -34,7 +39,7 @@ class ImageModelWrapper:
             param.requires_grad = False
 
         self.input_size, self.hidden_units, self.output_size = (
-            25088,
+            self.model.classifier[0].in_features,
             hidden_units,
             102,
         )
@@ -92,10 +97,14 @@ class ImageModelWrapper:
 
         checkpoint = torch.load("/" + path)
 
-        if checkpoint["model_type"] == "vgg13":
-            self.model = models.vgg13()
+        if hasattr(models, checkpoint["model_type"]):
+            self.model = getattr(models, checkpoint["model_type"])()
         else:
-            self.model = models.vgg16()
+            sys.exit(
+                "Error while loading saved model - architecture '{}' not found.".format(
+                    arch
+                )
+            )
 
         self.model.classifier = ImageClassifier(
             checkpoint["input_size"],

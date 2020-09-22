@@ -113,10 +113,9 @@ def main():
     parser.add_argument(
         "--arch",
         action="store",
-        choices=["vgg13", "vgg16"],
         default="vgg13",
         dest="arch",
-        help="architecture to use as base for model training",
+        help="architecture to use as base for model training. Valid values can be found at https://pytorch.org/docs/stable/torchvision/models.html",
     )
     parser.add_argument(
         "--learning_rate",
